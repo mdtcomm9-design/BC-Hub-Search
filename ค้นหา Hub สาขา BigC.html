@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ค้นหา Hub สาขา BigC</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EAF4FC;
+    --panel: #FBFEFF;
+    --ink: #12293A;
+    --ink-soft: #5D7A90;
+    --line: #CDE6F5;
+    --teal: #1D7FBF;
+    --teal-soft: #D7ECFA;
+    --amber: #B87A2E;
+    --amber-soft: #F3E7D4;
+    box-sizing: border-box;
+    padding-top: env(safe-area-inset-top, 0px);
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0C1B27;
+      --panel: #142534;
+      --ink: #E7F2FA;
+      --ink-soft: #8FADC2;
+      --line: #223A4C;
+      --teal: #6FC4F0;
+      --teal-soft: #163244;
+      --amber: #E6A662;
+      --amber-soft: #34291B;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0C1B27;
+    --panel: #142534;
+    --ink: #E7F2FA;
+    --ink-soft: #8FADC2;
+    --line: #223A4C;
+    --teal: #6FC4F0;
+    --teal-soft: #163244;
+    --amber: #E6A662;
+    --amber-soft: #34291B;
+  }
+  html { scroll-padding-top: env(safe-area-inset-top, 0px); }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: linear-gradient(180deg, #F5FBFF 0%, var(--bg) 320px);
+    color: var(--ink);
+    font-family: 'Sarabun', sans-serif;
+    min-height: 100%;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) body { background: var(--bg); }
+  }
+  :root[data-theme="dark"] body { background: var(--bg); }
+  .wrap {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 28px 18px 60px;
+  }
+  header { margin-bottom: 20px; }
+  .eyebrow {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12.5px;
+    letter-spacing: 0.04em;
+    color: var(--teal);
+    margin: 0 0 6px;
+  }
+  h1 {
+    font-size: 25px;
+    font-weight: 700;
+    margin: 0 0 6px;
+    line-height: 1.3;
+  }
+  .sub {
+    color: var(--ink-soft);
+    font-size: 14.5px;
+    margin: 0;
+    line-height: 1.55;
+  }
+
+  .search-box {
+    position: sticky;
+    top: env(safe-area-inset-top, 0px);
+    z-index: 5;
+    background: var(--bg);
+    padding: 16px 0 12px;
+    margin-bottom: 4px;
+  }
+  .search-input-row {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--panel);
+    border: 1.5px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .search-input-row svg { flex: none; color: var(--ink-soft); }
+  #q {
+    flex: 1;
+    border: none;
+    outline: none;
+    background: transparent;
+    font-family: inherit;
+    font-size: 16px;
+    color: var(--ink);
+  }
+  #q::placeholder { color: var(--ink-soft); }
+  .count {
+    font-size: 12.5px;
+    color: var(--ink-soft);
+    margin: 10px 2px 0;
+    font-family: 'IBM Plex Mono', monospace;
+  }
+
+  .list { margin-top: 14px; display: flex; flex-direction: column; gap: 10px; }
+  .card {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 15px;
+  }
+  .card-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+  }
+  .store-name { font-weight: 600; font-size: 16px; }
+  .code-block { text-align: right; white-space: nowrap; }
+  .code-label {
+    font-size: 10.5px;
+    color: var(--ink-soft);
+    margin-bottom: 2px;
+  }
+  .code {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 13px;
+    font-weight: 500;
+    color: var(--teal);
+  }
+  .hyper { font-size: 13px; color: var(--ink-soft); margin-top: 2px; }
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px 10px;
+    margin-top: 12px;
+  }
+  .field { }
+  .field-label {
+    font-size: 11px;
+    color: var(--ink-soft);
+    margin-bottom: 2px;
+  }
+  .field-value { font-size: 14px; font-weight: 500; }
+  .hub-pill {
+    display: inline-block;
+    background: var(--teal-soft);
+    color: var(--teal);
+    border-radius: 7px;
+    padding: 2px 8px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+  .hub-pill.tbc {
+    background: var(--amber-soft);
+    color: var(--amber);
+  }
+
+  .empty {
+    text-align: center;
+    padding: 50px 20px;
+    color: var(--ink-soft);
+    font-size: 14.5px;
+  }
+
+  @media (max-width: 380px) {
+    .grid { grid-template-columns: 1fr 1fr 1fr; gap: 8px 6px; }
+    .store-name { font-size: 15px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <p class="eyebrow">BigC · Hub Lookup</p>
+    <h1>ค้นหา Hub ของสาขา BigC</h1>
+    <p class="sub">พิมพ์ชื่อสาขา, Code BigC หรือชื่อ Hub เพื่อดูว่าสาขานั้นขึ้นอยู่กับ Hub ไหน พร้อมข้อมูล Hyper Store, Store No., Plant และ Code Mitsu</p>
+  </header>
+
+  <div class="search-box">
+    <div class="search-input-row">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+      <input id="q" type="text" placeholder="เช่น Rama2, 11116, HUB_BANGPHLEE" autocomplete="off" />
+    </div>
+    <p class="count" id="count"></p>
+  </div>
+
+  <div class="list" id="list"></div>
+  <div class="empty" id="empty" style="display:none;">ไม่พบสาขาที่ตรงกับคำค้นหา</div>
+</div>
+
+<script>
+const DATA = [{"code_bigc":11116,"hyper_store":"HHRM21 (สาขาRama2)","saka":"Rama2","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000112},{"code_bigc":11226,"hyper_store":"HHKNN1 (สาขากระนวน)","saka":"กระนวน","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000221},{"code_bigc":11160,"hyper_store":"HHKBI1 (สาขากระบี่)","saka":"กระบี่","hub":"HUB_PHUKET1","store_no":91307,"plant":"BKK","code_mitsu":60000156},{"code_bigc":11217,"hyper_store":"HHKLS1 (สาขากาฬสินธุ์)","saka":"กาฬสินธุ์","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000212},{"code_bigc":11171,"hyper_store":"HHKPP1 (สาขากำแพงเพชร)","saka":"กำแพงเพชร","hub":"HUB_NAKHONSAWAN2","store_no":91308,"plant":"BKK","code_mitsu":60000167},{"code_bigc":11185,"hyper_store":"HHCWT2 (สาขาแจ้งวัฒนะ 2)","saka":"แจ้งวัฒนะ 2","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000180},{"code_bigc":11137,"hyper_store":"HHCCS1 (สาขาฉะเชิงเทรา)","saka":"ฉะเชิงเทรา","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000133},{"code_bigc":11152,"hyper_store":"HHCBR1 (สาขาชลบุรี)","saka":"ชลบุรี","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000148},{"code_bigc":11127,"hyper_store":"HHCMI1 (สาขาเชียงใหม่)","saka":"เชียงใหม่","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000123},{"code_bigc":11184,"hyper_store":"HHCMI2 (สาขาเชียงใหม่ 2)","saka":"เชียงใหม่ 2","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000179},{"code_bigc":11132,"hyper_store":"HHDKN1 (สาขาดาวคะนอง)","saka":"ดาวคะนอง","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000128},{"code_bigc":11207,"hyper_store":"HHTAK1 (สาขาตาก)","saka":"ตาก","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000202},{"code_bigc":11133,"hyper_store":"HHTWN1 (สาขาติวานนท์)","saka":"ติวานนท์","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000129},{"code_bigc":11223,"hyper_store":"HHNKM1 (สาขานครพนม)","saka":"นครพนม","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000218},{"code_bigc":11135,"hyper_store":"HHNKS1 (สาขานครสวรรค์)","saka":"นครสวรรค์","hub":"HUB_NAKHONSAWAN2","store_no":91308,"plant":"BKK","code_mitsu":60000131},{"code_bigc":11106,"hyper_store":"HHBPE1 (สาขาบางพลี)","saka":"บางพลี","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000104},{"code_bigc":11183,"hyper_store":"HHBYI1 (สาขาบางใหญ่)","saka":"บางใหญ่","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000178},{"code_bigc":11235,"hyper_store":"HHBDG1 (สาขาบ้านดุง)","saka":"บ้านดุง","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000230},{"code_bigc":11230,"hyper_store":"HHBPI1 (สาขาบ้านไผ่)","saka":"บ้านไผ่","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000225},{"code_bigc":11139,"hyper_store":"HHPTN1 (สาขาปัตตานี)","saka":"ปัตตานี","hub":"HUB_HATYAI2","store_no":91306,"plant":"BKK","code_mitsu":60000135},{"code_bigc":11253,"hyper_store":"HHPAC1 (สาขาปากช่อง)","saka":"ปากช่อง","hub":"HUB_PAKTHONGCHAI","store_no":91304,"plant":"KKN","code_mitsu":60000346},{"code_bigc":11134,"hyper_store":"HHPTY2 (สาขาพัทยา 2)","saka":"พัทยา 2","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000130},{"code_bigc":15014,"hyper_store":"KPIBUN (สาขาพิบูลมังสาหาร)","saka":"พิบูลมังสาหาร","hub":"TBC","store_no":null,"plant":"KKN","code_mitsu":60000245},{"code_bigc":11113,"hyper_store":"HHPSL2 (สาขาพิษณุโลก)","saka":"พิษณุโลก","hub":"HUB_NAKHONSAWAN2","store_no":91308,"plant":"BKK","code_mitsu":60000250},{"code_bigc":11179,"hyper_store":"HHPKS2 (สาขาเพชรเกษม2)","saka":"เพชรเกษม2","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000174},{"code_bigc":11120,"hyper_store":"HHPBR1 (สาขาเพชรบุรี)","saka":"เพชรบุรี","hub":"TBC","store_no":null,"plant":"BKK","code_mitsu":60000116},{"code_bigc":11228,"hyper_store":"HHPPS1 (สาขาโพนพิสัย)","saka":"โพนพิสัย","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000223},{"code_bigc":11168,"hyper_store":"HHMHC1 (สาขามหาชัย)","saka":"มหาชัย","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000164},{"code_bigc":11215,"hyper_store":"HHRET1 (สาขาร้อยเอ็ด)","saka":"ร้อยเอ็ด","hub":"TBC","store_no":null,"plant":"KKN","code_mitsu":60000210},{"code_bigc":11115,"hyper_store":"HHRYG1 (สาขาระยอง)","saka":"ระยอง","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000111},{"code_bigc":11191,"hyper_store":"HHRCD1 (สาขารัชดาภิเษก)","saka":"รัชดาภิเษก","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000186},{"code_bigc":11147,"hyper_store":"HHRCB1 (สาขาราชบุรี)","saka":"ราชบุรี","hub":"TBC","store_no":null,"plant":"BKK","code_mitsu":60000143},{"code_bigc":11180,"hyper_store":"HHRIT1 (สาขารามอินทรา)","saka":"รามอินทรา","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000175},{"code_bigc":11119,"hyper_store":"HHLBR1 (สาขาลพบุรี)","saka":"ลพบุรี","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000115},{"code_bigc":11148,"hyper_store":"HHLLK1 (สาขาลำลูกกา)","saka":"ลำลูกกา","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000144},{"code_bigc":11241,"hyper_store":"HHWCB1 (สาขา วิเชียรบุรี)","saka":"วิเชียรบุรี","hub":"HUB_NAKHONSAWAN2","store_no":91308,"plant":"BKK","code_mitsu":60000236},{"code_bigc":11167,"hyper_store":"HHSSK1 (สาขาศรีสะเกษ)","saka":"ศรีสะเกษ","hub":"TBC","store_no":null,"plant":"KKN","code_mitsu":60000163},{"code_bigc":11212,"hyper_store":"HHSTN1 (สาขาสตูล)","saka":"สตูล","hub":"HUB_HATYAI2","store_no":91306,"plant":"BKK","code_mitsu":60000207},{"code_bigc":11164,"hyper_store":"HHSKW1 (สาขาสระแก้ว)","saka":"สระแก้ว","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000160},{"code_bigc":11128,"hyper_store":"HHSSW1 (สาขาสุขสวัสดิ์)","saka":"สุขสวัสดิ์","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000124},{"code_bigc":11156,"hyper_store":"HHSKT1 (สาขาสุโขทัย)","saka":"สุโขทัย","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000152},{"code_bigc":11112,"hyper_store":"HHSRT1 (สาขาสุราษฎร์ธานี)","saka":"สุราษฎร์ธานี","hub":"HUB_DC SURAT","store_no":91302,"plant":"BKK","code_mitsu":60000109},{"code_bigc":11140,"hyper_store":"HHSRN1 (สาขาสุรินทร์)","saka":"สุรินทร์","hub":"TBC","store_no":null,"plant":"KKN","code_mitsu":60000136},{"code_bigc":11200,"hyper_store":"HHSWT1 (สาขาสุวินทวงศ์)","saka":"สุวินทวงศ์","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000195},{"code_bigc":11201,"hyper_store":"HHNCK1 (สาขาหนองจอก)","saka":"หนองจอก","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000196},{"code_bigc":11246,"hyper_store":"HHNBA1 (สาขาหนองบัว)","saka":"หนองบัว","hub":"HUB_NAKHONSAWAN2","store_no":91308,"plant":"BKK","code_mitsu":60000240},{"code_bigc":11121,"hyper_store":"HHHYI1 (สาขาหาดใหญ่)","saka":"หาดใหญ่","hub":"HUB_HATYAI2","store_no":91306,"plant":"BKK","code_mitsu":60000117},{"code_bigc":11232,"hyper_store":"HHARN1 (สาขาอรัญประเทศ)","saka":"อรัญประเทศ","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000227},{"code_bigc":11169,"hyper_store":"HHANC1 (สาขาอำนาจเจริญ)","saka":"อำนาจเจริญ","hub":"TBC","store_no":null,"plant":"KKN","code_mitsu":60000165},{"code_bigc":11109,"hyper_store":"HHUDT1 (สาขาอุดรธานี)","saka":"อุดรธานี","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000107},{"code_bigc":11124,"hyper_store":"HHUBR1 (สาขาอุบลราชธานี)","saka":"อุบลราชธานี","hub":"TBC","store_no":null,"plant":"KKN","code_mitsu":60000120},{"code_bigc":14001,"hyper_store":"HHJBSR (สาขา JUMBO สำโรง)","saka":"JUMBO สำโรง","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000246},{"code_bigc":11111,"hyper_store":"HHKRT1 (สาขาKorat)","saka":"Korat","hub":"HUB_PAKTHONGCHAI","store_no":91304,"plant":"KKN","code_mitsu":60000108},{"code_bigc":11108,"hyper_store":"HHRST1 (สาขาRangsit)","saka":"Rangsit","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000106},{"code_bigc":11221,"hyper_store":"HHKLP1 (สาขากัลปพฤกษ์)","saka":"กัลปพฤกษ์","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000216},{"code_bigc":11224,"hyper_store":"HHKCN1 (สาขากาญจนบุรี)","saka":"กาญจนบุรี","hub":"TBC","store_no":null,"plant":"BKK","code_mitsu":60000219},{"code_bigc":11110,"hyper_store":"HHKKN1 (สาขาขอนแก่น)","saka":"ขอนแก่น","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000249},{"code_bigc":11251,"hyper_store":"HHKKN2 (สาขาขอนแก่น 2)","saka":"ขอนแก่น 2","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000336},{"code_bigc":11242,"hyper_store":"HHKTK1 (สาขา คำตากล้า)","saka":"คำตากล้า","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000237},{"code_bigc":11233,"hyper_store":"HHKRT2 (สาขาโคราช 2)","saka":"โคราช 2","hub":"HUB_PAKTHONGCHAI","store_no":91304,"plant":"KKN","code_mitsu":60000228},{"code_bigc":11209,"hyper_store":"HHCTB1 (สาขา จันทบุรี)","saka":"จันทบุรี","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000204},{"code_bigc":11102,"hyper_store":"HHCWT1 (สาขาแจ้งวัฒนะ)","saka":"แจ้งวัฒนะ","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000101},{"code_bigc":11204,"hyper_store":"HHCCS2 (สาขาฉะเชิงเทรา 2)","saka":"ฉะเชิงเทรา 2","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000199},{"code_bigc":11181,"hyper_store":"HHCBR2 (สาขาชลบุรี 2)","saka":"ชลบุรี 2","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000176},{"code_bigc":11158,"hyper_store":"HHCYP1 (สาขาชัยภูมิ)","saka":"ชัยภูมิ","hub":"HUB_PAKTHONGCHAI","store_no":91304,"plant":"KKN","code_mitsu":60000154},{"code_bigc":11206,"hyper_store":"HHCPN1 (สาขาชุมพร)","saka":"ชุมพร","hub":"HUB_DC SURAT","store_no":91302,"plant":"BKK","code_mitsu":60000201},{"code_bigc":11117,"hyper_store":"HHCRI1 (สาขาเชียงราย)","saka":"เชียงราย","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000113},{"code_bigc":11250,"hyper_store":"HHCRI2 (สาขาเชียงราย 2)","saka":"เชียงราย 2","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000244},{"code_bigc":11125,"hyper_store":"HHDMG1 (สาขาดอนเมือง)","saka":"ดอนเมือง","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000121},{"code_bigc":11220,"hyper_store":"HHTRA1 (สาขาตรัง)","saka":"ตรัง","hub":"HUB_HATYAI2","store_no":91306,"plant":"BKK","code_mitsu":60000215},{"code_bigc":11238,"hyper_store":"HHTTK1 (สาขาท่าตะโก)","saka":"ท่าตะโก","hub":"HUB_NAKHONSAWAN2","store_no":91308,"plant":"BKK","code_mitsu":60000233},{"code_bigc":11252,"hyper_store":"HHSNI1 (สาขาไทรน้อย)","saka":"ไทรน้อย","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000341},{"code_bigc":11107,"hyper_store":"HHNKP1 (สาขานครปฐม)","saka":"นครปฐม","hub":"TBC","store_no":null,"plant":"BKK","code_mitsu":60000105},{"code_bigc":11249,"hyper_store":"HHNKT2 (สาขานครศรีธรรมราช)","saka":"นครศรีธรรมราช","hub":"HUB_DC SURAT","store_no":91302,"plant":"BKK","code_mitsu":60000243},{"code_bigc":11214,"hyper_store":"HHNKS2 (สาขานครสวรรค์2)","saka":"นครสวรรค์2","hub":"HUB_NAKHONSAWAN2","store_no":91308,"plant":"BKK","code_mitsu":60000209},{"code_bigc":11256,"hyper_store":"HHMNTW (สาขานราธิวาส)","saka":"นราธิวาส","hub":"HUB_HATYAI2","store_no":91306,"plant":"BKK","code_mitsu":60000454},{"code_bigc":11161,"hyper_store":"HHNVN1 (สาขานวนคร)","saka":"นวนคร","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000157},{"code_bigc":11229,"hyper_store":"HHNTW1 (สาขานาทวี)","saka":"นาทวี","hub":"HUB_HATYAI2","store_no":91306,"plant":"BKK","code_mitsu":60000224},{"code_bigc":11225,"hyper_store":"HHNAN1 (สาขาน่าน)","saka":"น่าน","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000220},{"code_bigc":11236,"hyper_store":"HHNYN1 (สาขาน้ำยืน)","saka":"น้ำยืน","hub":"TBC","store_no":null,"plant":"KKN","code_mitsu":60000231},{"code_bigc":11255,"hyper_store":"HHBBW1 (สาขาบ่อวิน)","saka":"บ่อวิน","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000437},{"code_bigc":11130,"hyper_store":"HHBNA1 (สาขาบางนา)","saka":"บางนา","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000126},{"code_bigc":11195,"hyper_store":"HHBBN1 (สาขาบางบอน)","saka":"บางบอน","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000190},{"code_bigc":11196,"hyper_store":"HHBPK1 (สาขาบางปะกอก)","saka":"บางปะกอก","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000191},{"code_bigc":11208,"hyper_store":"HHBBG1 (สาขาบ้านบึง)","saka":"บ้านบึง","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000203},{"code_bigc":11157,"hyper_store":"HHBPG1 (สาขาบ้านโป่ง)","saka":"บ้านโป่ง","hub":"TBC","store_no":null,"plant":"BKK","code_mitsu":60000153},{"code_bigc":11153,"hyper_store":"HHBRR1 (สาขาบุรีรัมย์)","saka":"บุรีรัมย์","hub":"TBC","store_no":null,"plant":"KKN","code_mitsu":60000149},{"code_bigc":11234,"hyper_store":"HHPTT1 (สาขา ปทุมธานี)","saka":"ปทุมธานี","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000229},{"code_bigc":11190,"hyper_store":"HHRM41 (สาขาพระราม 4)","saka":"พระราม 4","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000185},{"code_bigc":11197,"hyper_store":"HHRM22 (สาขาพระราม 2(2))","saka":"พระราม2 2","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000192},{"code_bigc":11243,"hyper_store":"HHPKN1 (สาขา พังโคน)","saka":"พังโคน","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000238},{"code_bigc":11104,"hyper_store":"HHPTY1 (สาขาพัทยา)","saka":"พัทยา","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000103},{"code_bigc":11192,"hyper_store":"HHPTY3 (สาขาพัทยา 3)","saka":"พัทยา 3","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000187},{"code_bigc":11142,"hyper_store":"HHPKS1 (สาขาเพชรเกษม)","saka":"เพชรเกษม","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000138},{"code_bigc":11159,"hyper_store":"HHPCN1 (สาขาเพชรบูรณ์)","saka":"เพชรบูรณ์","hub":"HUB_NAKHONSAWAN2","store_no":91308,"plant":"BKK","code_mitsu":60000155},{"code_bigc":11146,"hyper_store":"HHPHR1 (สาขาแพร่)","saka":"แพร่","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000142},{"code_bigc":11126,"hyper_store":"HHFSI1 (สาขาแฟชั่นไอซ์แลนด์)","saka":"แฟชั่นไอซ์แลนด์","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000122},{"code_bigc":11129,"hyper_store":"HHPKT1 (สาขาภูเก็ต)","saka":"ภูเก็ต","hub":"HUB_PHUKET1","store_no":91307,"plant":"BKK","code_mitsu":60000125},{"code_bigc":11187,"hyper_store":"HHPKT2 (สาขาภูเก็ต 2)","saka":"ภูเก็ต2","hub":"HUB_PHUKET1","store_no":91307,"plant":"BKK","code_mitsu":60000182},{"code_bigc":11254,"hyper_store":"HHMHC2 (สาขามหาชัย 2)","saka":"มหาชัย 2","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000385},{"code_bigc":11166,"hyper_store":"HHMHS1 (สาขามหาสารคาม)","saka":"มหาสารคาม","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000162},{"code_bigc":11213,"hyper_store":"HHMDH1 (สาขามุกดาหาร)","saka":"มุกดาหาร","hub":"TBC","store_no":null,"plant":"KKN","code_mitsu":60000208},{"code_bigc":11210,"hyper_store":"HHMGB1 (สาขาเมกาบางนา)","saka":"เมกาบางนา","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000205},{"code_bigc":11163,"hyper_store":"HHYST1 (สาขายโสธร)","saka":"ยโสธร","hub":" -","store_no":null,"plant":"KKN","code_mitsu":60000159},{"code_bigc":11259,"hyper_store":"HHYAL1 (สาขายะลา)","saka":"ยะลา","hub":"HUB_HATYAI2","store_no":91306,"plant":"BKK","code_mitsu":60000487},{"code_bigc":11202,"hyper_store":"HHRKO1 (สาขาร่มเกล้า)","saka":"ร่มเกล้า","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000197},{"code_bigc":11227,"hyper_store":"HHRNG1 (สาขาระนอง)","saka":"ระนอง","hub":"HUB_DC SURAT","store_no":91302,"plant":"BKK","code_mitsu":60000222},{"code_bigc":11198,"hyper_store":"HHRSK3 (สาขารังสิต คลอง 3)","saka":"รังสิต คลอง 3","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000193},{"code_bigc":11162,"hyper_store":"HHRSK6 (สาขารังสิตคลองหก)","saka":"รังสิตคลองหก","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000158},{"code_bigc":11189,"hyper_store":"HHRTN2 (สาขารัตนาธิเบศร์ 2)","saka":"รัตนาธิเบศร์ 2","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000184},{"code_bigc":11172,"hyper_store":"HHRDR1 (สาขาราชดำริ)","saka":"ราชดำริ","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000168},{"code_bigc":11131,"hyper_store":"HHLPO1 (สาขาลาดพร้าว)","saka":"ลาดพร้าว","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000127},{"code_bigc":11174,"hyper_store":"HHLPO2 (สาขาลาดพร้าว2)","saka":"ลาดพร้าว2","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000169},{"code_bigc":11248,"hyper_store":"HHLAO1 (สาขาลาดยาว)","saka":"ลาดยาว","hub":"HUB_NAKHONSAWAN2","store_no":91308,"plant":"BKK","code_mitsu":60000242},{"code_bigc":11118,"hyper_store":"HHLPG1 (สาขาลำปาง)","saka":"ลำปาง","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000114},{"code_bigc":11150,"hyper_store":"HHLPN1 (สาขาลำพูน)","saka":"ลำพูน","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000146},{"code_bigc":11193,"hyper_store":"HHLLK2 (สาขาลำลูกกา คลอง4 (2))","saka":"ลำลูกกา คลอง4 2","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000188},{"code_bigc":11211,"hyper_store":"HHLOE1 (สาขาเลย)","saka":"เลย","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000206},{"code_bigc":11101,"hyper_store":"HHWSW1 (สาขาวงศ์สว่าง)","saka":"วงศ์สว่าง","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000100},{"code_bigc":11222,"hyper_store":"HHSMH1 (สาขาศรีมหาโพธิ)","saka":"ศรีมหาโพธิ","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000217},{"code_bigc":11145,"hyper_store":"HHSKN1 (สาขาสกลนคร)","saka":"สกลนคร","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000141},{"code_bigc":11123,"hyper_store":"HHSMP1 (สาขาสมุทรปราการ)","saka":"สมุทรปราการ","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000119},{"code_bigc":11218,"hyper_store":"HHSMS1 (สาขาสมุทรสงคราม)","saka":"สมุทรสงคราม","hub":"TBC","store_no":null,"plant":"BKK","code_mitsu":60000213},{"code_bigc":11151,"hyper_store":"HHSMI1 (สาขาสมุย)","saka":"สมุย","hub":"HUB_DC SURAT","store_no":91302,"plant":"BKK","code_mitsu":60000147},{"code_bigc":11136,"hyper_store":"HHSPK1 (สาขาสะพานควาย)","saka":"สะพานควาย","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000132},{"code_bigc":11244,"hyper_store":"HHSTH1 (สาขาสัตหีบ)","saka":"สัตหีบ","hub":"HUB_PATTAYA2","store_no":91305,"plant":"BKK","code_mitsu":60000239},{"code_bigc":11138,"hyper_store":"HHSRG1 (สาขาสำโรง)","saka":"สำโรง","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000134},{"code_bigc":11143,"hyper_store":"HHSKP1 (สาขาสุขาภิบาล3)","saka":"สุขาภิบาล3","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000139},{"code_bigc":11219,"hyper_store":"HHSPB1 (สาขาสุพรรณบุรี)","saka":"สุพรรณบุรี","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000214},{"code_bigc":11240,"hyper_store":"HHSWN1 (สาขา สุวรรณภูมิ (ร้อยเอ็ด))","saka":"สุวรรณภูมิ ร้อยเอ็ด","hub":"TBC","store_no":null,"plant":"KKN","code_mitsu":60000235},{"code_bigc":11257,"hyper_store":"HSKLOK (สาขาสุไหงโก-ลก นราธิวาส)","saka":"สุไหงโก-ลก นราธิวาส","hub":"HUB_HATYAI2","store_no":91306,"plant":"BKK","code_mitsu":60000482},{"code_bigc":11247,"hyper_store":"HHNKI1 (สาขาหนองกี่)","saka":"หนองกี่","hub":"TBC","store_no":null,"plant":"KKN","code_mitsu":60000241},{"code_bigc":11231,"hyper_store":"HHNOK1 (สาขาหนองคาย)","saka":"หนองคาย","hub":"HUB_UDON1","store_no":91301,"plant":"KKN","code_mitsu":60000226},{"code_bigc":11122,"hyper_store":"HHHMK1 (สาขาหัวหมาก)","saka":"หัวหมาก","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000118},{"code_bigc":11260,"hyper_store":"HMHUMA (สาขาหัวหิน มาร์เช่)","saka":"หัวหิน มาร์เช่","hub":"TBC","store_no":null,"plant":"BKK","code_mitsu":60000548},{"code_bigc":11154,"hyper_store":"HHHDG1 (สาขาหางดง)","saka":"หางดง","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000150},{"code_bigc":11188,"hyper_store":"HHHDG2 (สาขาหางดง 2)","saka":"หางดง 2","hub":"TBC","store_no":null,"plant":"LPN","code_mitsu":60000183},{"code_bigc":11186,"hyper_store":"HHHYI2 (สาขาหาดใหญ่ 2)","saka":"หาดใหญ่ 2","hub":"HUB_HATYAI2","store_no":91306,"plant":"BKK","code_mitsu":60000181},{"code_bigc":11155,"hyper_store":"HHAYT1 (สาขาอยุธยา)","saka":"อยุธยา","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000151},{"code_bigc":11182,"hyper_store":"HHONH1 (สาขาอ่อนนุช)","saka":"อ่อนนุช","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000177},{"code_bigc":11141,"hyper_store":"HHOYI1 (สาขาอ้อมใหญ่)","saka":"อ้อมใหญ่","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000137},{"code_bigc":11216,"hyper_store":"HHATG1 (สาขาอ่างทอง)","saka":"อ่างทอง","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000211},{"code_bigc":11199,"hyper_store":"HHISR1 (สาขาอิสรภาพ)","saka":"อิสรภาพ","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000194},{"code_bigc":11144,"hyper_store":"HHEKM1 (สาขาเอกมัย)","saka":"เอกมัย","hub":"HUB_BANGPHLEE","store_no":91917,"plant":"BKK","code_mitsu":60000140},{"code_bigc":11258,"hyper_store":"HHSRBI (สาขา ไฮเปอร์ สระบุรี)","saka":"ไฮเปอร์ สระบุรี","hub":"HUB_DC THANYABURI","store_no":91303,"plant":"BKK","code_mitsu":60000484}]
+;
+
+const q = document.getElementById('q');
+const list = document.getElementById('list');
+const empty = document.getElementById('empty');
+const count = document.getElementById('count');
+
+function hubClass(hub) {
+  if (!hub || hub.trim() === '-' || hub.trim().toUpperCase() === 'TBC') return 'hub-pill tbc';
+  return 'hub-pill';
+}
+function hubLabel(hub) {
+  if (!hub || hub.trim() === '-') return 'ยังไม่กำหนด';
+  return hub;
+}
+function val(v) {
+  return (v === null || v === undefined || v === '') ? '—' : v;
+}
+
+function render(items) {
+  list.innerHTML = '';
+  if (items.length === 0) {
+    empty.style.display = 'block';
+    count.textContent = '';
+    return;
+  }
+  empty.style.display = 'none';
+  count.textContent = `พบ ${items.length} สาขา`;
+  const frag = document.createDocumentFragment();
+  items.forEach(item => {
+    const card = document.createElement('div');
+    card.className = 'card';
+    card.innerHTML = `
+      <div class="card-top">
+        <div>
+          <div class="store-name">${item.saka || '—'}</div>
+          <div class="hyper">${item.hyper_store || ''}</div>
+        </div>
+        <div class="code-block">
+          <div class="code-label">Store No</div>
+          <div class="code">#${val(item.code_bigc)}</div>
+        </div>
+      </div>
+      <div class="grid">
+        <div class="field">
+          <div class="field-label">HUB</div>
+          <div class="field-value"><span class="${hubClass(item.hub)}">${hubLabel(item.hub)}</span></div>
+        </div>
+        <div class="field">
+          <div class="field-label">Plant</div>
+          <div class="field-value">${val(item.plant)}</div>
+        </div>
+        <div class="field">
+          <div class="field-label">Hub No.</div>
+          <div class="field-value">${val(item.store_no)}</div>
+        </div>
+      </div>
+    `;
+    frag.appendChild(card);
+  });
+  list.appendChild(frag);
+}
+
+function search(term) {
+  const t = term.trim().toLowerCase();
+  if (!t) return DATA;
+  return DATA.filter(item => {
+    return String(item.code_bigc).includes(t) ||
+           (item.hyper_store || '').toLowerCase().includes(t) ||
+           (item.saka || '').toLowerCase().includes(t) ||
+           (item.hub || '').toLowerCase().includes(t) ||
+           String(item.store_no || '').includes(t) ||
+           (item.plant || '').toLowerCase().includes(t) ||
+           String(item.code_mitsu || '').includes(t);
+  });
+}
+
+q.addEventListener('input', () => render(search(q.value)));
+render(DATA);
+</script>
+</body>
+</html>
